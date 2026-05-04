@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="../style.css">
 <?php include("../config/db.php"); ?>
 
 <link rel="stylesheet" href="../style.css">
@@ -17,27 +16,28 @@
 </tr>
 
 <?php
-$query = "
-SELECT s.name, c.course_name, a.date, a.status
-FROM attendance a
-JOIN students s ON a.student_id = s.student_id
-JOIN courses c ON a.course_id = c.course_id
-ORDER BY a.date DESC
-";
+try {
+    $query = "
+    SELECT s.name, c.course_name, a.date, a.status
+    FROM attendance a
+    JOIN students s ON a.student_id = s.student_id
+    JOIN courses c ON a.course_id = c.course_id
+    ORDER BY a.date DESC
+    ";
 
-$res = pg_query($conn, $query);
+    $stmt = $conn->query($query);
 
-if(!$res){
-    echo "<tr><td colspan='4'>Error: ".pg_last_error($conn)."</td></tr>";
-}
+    while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+        echo "<tr>
+                <td>{$row['name']}</td>
+                <td>{$row['course_name']}</td>
+                <td>{$row['date']}</td>
+                <td>{$row['status']}</td>
+              </tr>";
+    }
 
-while($row = pg_fetch_assoc($res)){
-    echo "<tr>
-            <td>{$row['name']}</td>
-            <td>{$row['course_name']}</td>
-            <td>{$row['date']}</td>
-            <td>{$row['status']}</td>
-          </tr>";
+} catch (PDOException $e) {
+    echo "<tr><td colspan='4'>Error: " . $e->getMessage() . "</td></tr>";
 }
 ?>
 
