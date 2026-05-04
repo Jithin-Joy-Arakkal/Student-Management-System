@@ -1,18 +1,17 @@
+<?php
+$host = "aws-1-ap-northeast-1.pooler.supabase.com";   // 🔁 replace with your host
+$dbname = "postgres";
+$user = "postgres.ezlrihbweqznymvwkwxm";
+$pass = "s4csa24101109";          // 🔁 replace
+
 try {
     $conn = new PDO(
-        "pgsql:host=$host;port=$port;dbname=$dbname",
+        "pgsql:host=$host;port=5432;dbname=$dbname;sslmode=require",
         $user,
-        $password
+        $pass
     );
 
-    // Make PDO throw exceptions on errors
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // (Optional) fetch associative arrays by default
-    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-    // Optional debug (remove in final submission)
-    // echo "Connected to Supabase successfully!";
 
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
