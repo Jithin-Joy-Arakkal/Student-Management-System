@@ -1,47 +1,71 @@
-<link rel="stylesheet" href="../style.css">
 <?php include("../config/db.php"); ?>
 
+<link rel="stylesheet" href="../style.css">
+
+<div class="container">
 <h2>Add Marks</h2>
 
+<a href="../index.php">← Back to Home</a>
+
 <form method="POST">
-    Student:
-    <select name="student_id">
+
+    <label>Student:</label>
+    <select name="student_id" required>
+        <option value="">-- Select Student --</option>
         <?php
-        $res = pg_query($conn, "SELECT * FROM students");
-        while($row = pg_fetch_assoc($res)){
+        $stmt = $conn->query("SELECT * FROM students");
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
             echo "<option value='{$row['student_id']}'>{$row['name']}</option>";
         }
         ?>
-    </select><br><br>
+    </select>
 
-    Course:
-    <select name="course_id">
+    <label>Course:</label>
+    <select name="course_id" required>
+        <option value="">-- Select Course --</option>
         <?php
-        $res = pg_query($conn, "SELECT * FROM courses");
-        while($row = pg_fetch_assoc($res)){
+        $stmt = $conn->query("SELECT * FROM courses");
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
             echo "<option value='{$row['course_id']}'>{$row['course_name']}</option>";
         }
         ?>
-    </select><br><br>
+    </select>
 
-    Marks: <input type="number" name="marks" required><br><br>
+    <label>Marks:</label>
+    <input type="number" name="marks" min="0" max="100" required>
 
     <button type="submit" name="submit">Submit</button>
 </form>
 
 <?php
 if(isset($_POST['submit'])){
+
     $sid = $_POST['student_id'];
     $cid = $_POST['course_id'];
     $marks = $_POST['marks'];
 
-    $query = "INSERT INTO grades (student_id, course_id, marks)
-              VALUES ('$sid','$cid','$marks')";
+    try {
 
-    $res = pg_query($conn, $query);
+        // Insert marks (grade auto handled by trigger)
+        $query = "INSERT INTO grades (student_id, course_id, marks)
+                  VALUES (:sid, :cid, :marks)
+                  ON CONFLICT (student_id, course_id)
+                  DO UPDATE SET marks = EXCLUDED.marks";
 
-    if($res) echo "<p style='color:green;'>Marks added! Grade auto-calculated.</p>";
-    else echo "<p style='color:red;'>".pg_last_error($conn)."</p>";
+        $stmt = $conn->prepare($query);
+
+        $stmt->execute([
+            ':sid' => $sid,
+            ':cid' => $cid,
+            ':marks' => $marks
+        ]);
+
+        echo "<p style='color:green;'>Marks saved! Grade auto-calculated.</p>";
+
+    } catch (PDOException $e) {
+        echo "<p style='color:red;'>Error: " . $e->getMessage() . "</p>";
+    }
 }
 ?>
+
 </div>
