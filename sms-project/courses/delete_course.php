@@ -9,19 +9,31 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $course_id = $_GET['id'];
 
 try {
-    $sql = "DELETE FROM courses WHERE course_id = :course_id";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([':course_id' => $course_id]);
+    // Delete all related records first (cascade), then delete the course
+    $conn->beginTransaction();
+
+    // 1. Delete grades for this course
+    $stmt = $conn->prepare("DELETE FROM grades WHERE course_id = :id");
+    $stmt->execute([':id' => $course_id]);
+
+    // 2. Delete attendance for this course
+    $stmt = $conn->prepare("DELETE FROM attendance WHERE course_id = :id");
+    $stmt->execute([':id' => $course_id]);
+
+    // 3. Delete enrollments for this course
+    $stmt = $conn->prepare("DELETE FROM enrollment WHERE course_id = :id");
+    $stmt->execute([':id' => $course_id]);
+
+    // 4. Delete the course
+    $stmt = $conn->prepare("DELETE FROM courses WHERE course_id = :id");
+    $stmt->execute([':id' => $course_id]);
+
+    $conn->commit();
 
     header("Location: view_courses.php?msg=deleted");
     exit;
 } catch (PDOException $e) {
-    // 23503 = foreign key violation (course is referenced in other tables)
-    if ($e->getCode() == '23503') {
-        header("Location: view_courses.php?msg=cannot_delete");
-        exit;
-    } else {
-        echo "Error deleting course: " . $e->getMessage();
-    }
+    $conn->rollBack();
+    echo "Error deleting course: " . $e->getMessage();
 }
 ?>

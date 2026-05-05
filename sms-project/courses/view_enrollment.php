@@ -1,6 +1,10 @@
 <?php
 require_once '../config/db.php';
 
+$page_title = 'View Enrollments';
+$active_page = 'view_enrollment';
+$base_path = '../';
+
 // JOIN query to display enrollment details with student and course names
 try {
     $sql = "SELECT e.enrollment_id, s.student_id, s.name AS student_name,
@@ -15,168 +19,65 @@ try {
 } catch (PDOException $e) {
     die("Error fetching enrollments: " . $e->getMessage());
 }
+
+include '../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Enrollments</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-        }
+<div class="page-header">
+    <h2>Enrollments</h2>
+    <p>View all student-course enrollment records.</p>
+</div>
 
-        .container {
-            width: 90%;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+<?php if (isset($_GET['msg']) && $_GET['msg'] === 'unenrolled') : ?>
+    <div class="alert alert-success">Student unenrolled successfully.</div>
+<?php endif; ?>
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+<?php if (isset($_GET['msg']) && $_GET['msg'] === 'cannot_unenroll') : ?>
+    <div class="alert alert-error">
+        Cannot unenroll student because related attendance or grade records exist.
+    </div>
+<?php endif; ?>
 
-        .top-links {
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .top-links a {
-            text-decoration: none;
-            color: white;
-            background: #007bff;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin: 0 5px;
-            display: inline-block;
-        }
-
-        .top-links a:hover {
-            background: #0056b3;
-        }
-
-        .message {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .message.success {
-            color: green;
-        }
-
-        .message.error {
-            color: red;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: center;
-        }
-
-        th {
-            background: #007bff;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-
-        .action-links a {
-            text-decoration: none;
-            padding: 6px 10px;
-            border-radius: 5px;
-            color: white;
-            margin: 0 4px;
-        }
-
-        .delete-btn {
-            background: #dc3545;
-        }
-
-        .delete-btn:hover {
-            background: #b52a37;
-        }
-
-        .no-data {
-            text-align: center;
-            color: #555;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Enrollment List</h2>
-
-    <div class="top-links">
-        <a href="enroll_student.php">Enroll Student</a>
-        <a href="view_courses.php">View Courses</a>
-        <a href="../index.php">Back to Home</a>
+<div class="card">
+    <div class="content-top">
+        <span class="text-muted"><?php echo count($enrollments); ?> enrollment(s) found</span>
+        <div class="content-top-actions">
+            <a href="enroll_student.php" class="btn btn-primary">+ Enroll Student</a>
+        </div>
     </div>
 
-    <?php if (isset($_GET['msg']) && $_GET['msg'] === 'unenrolled') : ?>
-        <p class="message success">Student unenrolled successfully.</p>
-    <?php endif; ?>
-
-    <?php if (isset($_GET['msg']) && $_GET['msg'] === 'cannot_unenroll') : ?>
-        <p class="message error">
-            Cannot unenroll student because related attendance or grade records exist.
-        </p>
-    <?php endif; ?>
-
     <?php if (count($enrollments) > 0) : ?>
-        <table>
-            <tr>
-                <th>Enrollment ID</th>
-                <th>Student ID</th>
-                <th>Student Name</th>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Actions</th>
-            </tr>
-
-            <?php foreach ($enrollments as $row) : ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['enrollment_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($row['student_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($row['student_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($row['course_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($row['course_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td class="action-links">
-                        <a class="delete-btn"
-                           href="unenroll_student.php?id=<?php echo $row['enrollment_id']; ?>"
-                           onclick="return confirm('Are you sure you want to unenroll this student?')">
-                            Unenroll
-                        </a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student Name</th>
+                        <th>Course Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($enrollments as $row) : ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['enrollment_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($row['student_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($row['course_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td>
+                                <div class="actions">
+                                    <a class="btn-action btn-action-delete"
+                                       href="unenroll_student.php?id=<?php echo $row['enrollment_id']; ?>"
+                                       onclick="event.preventDefault(); if(confirm('Are you sure you want to unenroll this student? Related attendance and grade records will also be removed.')) window.location.href=this.href;">Unenroll</a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php else : ?>
-        <p class="no-data">No enrollments found.</p>
+        <div class="empty-state">No enrollments found. Enroll a student to get started.</div>
     <?php endif; ?>
 </div>
 
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>

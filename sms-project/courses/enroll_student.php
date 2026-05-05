@@ -1,6 +1,10 @@
 <?php
 require_once '../config/db.php';
 
+$page_title = 'Enroll Student';
+$active_page = 'enroll_student';
+$base_path = '../';
+
 $message = "";
 $error = "";
 
@@ -48,137 +52,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+include '../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enroll Student</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
+<div class="page-header">
+    <h2>Enroll Student</h2>
+    <p>Register a student into a course.</p>
+</div>
 
-        .container {
-            width: 50%;
-            margin: 40px auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+<div class="card">
+    <div class="form-container">
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        <?php if (!empty($message)) : ?>
+            <div class="alert alert-success"><?php echo $message; ?></div>
+        <?php endif; ?>
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 12px;
-        }
+        <?php if (!empty($error)) : ?>
+            <div class="alert alert-error"><?php echo $error; ?></div>
+        <?php endif; ?>
 
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="student_id">Select Student</label>
+                <select id="student_id" name="student_id" required>
+                    <option value="">-- Choose a Student --</option>
+                    <?php foreach ($students as $s) : ?>
+                        <option value="<?php echo $s['student_id']; ?>"
+                            <?php echo (isset($student_id) && $student_id == $s['student_id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($s['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-        button {
-            margin-top: 18px;
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+            <div class="form-group">
+                <label for="course_id">Select Course</label>
+                <select id="course_id" name="course_id" required>
+                    <option value="">-- Choose a Course --</option>
+                    <?php foreach ($courses as $c) : ?>
+                        <option value="<?php echo $c['course_id']; ?>"
+                            <?php echo (isset($course_id) && $course_id == $c['course_id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($c['course_name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-        button:hover {
-            background: #0056b3;
-        }
-
-        .success {
-            color: green;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .error {
-            color: red;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .links {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .links a {
-            text-decoration: none;
-            color: #007bff;
-            margin: 0 10px;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Enroll Student in Course</h2>
-
-    <?php if (!empty($message)) : ?>
-        <p class="success"><?php echo $message; ?></p>
-    <?php endif; ?>
-
-    <?php if (!empty($error)) : ?>
-        <p class="error"><?php echo $error; ?></p>
-    <?php endif; ?>
-
-    <form method="POST" action="">
-        <label for="student_id">Select Student</label>
-        <select id="student_id" name="student_id" required>
-            <option value="">-- Choose a Student --</option>
-            <?php foreach ($students as $s) : ?>
-                <option value="<?php echo $s['student_id']; ?>"
-                    <?php echo (isset($student_id) && $student_id == $s['student_id']) ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($s['name'], ENT_QUOTES, 'UTF-8'); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <label for="course_id">Select Course</label>
-        <select id="course_id" name="course_id" required>
-            <option value="">-- Choose a Course --</option>
-            <?php foreach ($courses as $c) : ?>
-                <option value="<?php echo $c['course_id']; ?>"
-                    <?php echo (isset($course_id) && $course_id == $c['course_id']) ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($c['course_name'], ENT_QUOTES, 'UTF-8'); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <button type="submit">Enroll Student</button>
-    </form>
-
-    <div class="links">
-        <a href="view_enrollment.php">View Enrollments</a>
-        <a href="view_courses.php">View Courses</a>
-        <a href="../index.php">Back to Home</a>
+            <button type="submit" class="btn btn-primary">Enroll Student</button>
+        </form>
     </div>
 </div>
 
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>

@@ -1,6 +1,10 @@
 <?php
 require_once '../config/db.php';
 
+$page_title = 'Edit Student';
+$active_page = 'view_students';
+$base_path = '../';
+
 $message = "";
 $error = "";
 
@@ -65,130 +69,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+include '../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 50%;
-            margin: 40px auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 12px;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        textarea {
-            resize: vertical;
-        }
-
-        button {
-            margin-top: 18px;
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #1e7e34;
-        }
-
-        .success {
-            color: green;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .error {
-            color: red;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .links {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .links a {
-            text-decoration: none;
-            color: #007bff;
-            margin: 0 10px;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
+<div class="page-header">
     <h2>Edit Student</h2>
+    <p>Update the details for this student record.</p>
+</div>
 
-    <?php if (!empty($message)) : ?>
-        <p class="success"><?php echo $message; ?></p>
-    <?php endif; ?>
+<div class="card">
+    <div class="form-container">
 
-    <?php if (!empty($error)) : ?>
-        <p class="error"><?php echo $error; ?></p>
-    <?php endif; ?>
+        <?php if (!empty($message)) : ?>
+            <div class="alert alert-success"><?php echo $message; ?></div>
+        <?php endif; ?>
 
-    <form method="POST" action="">
-        <label for="name">Student Name</label>
-        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($student['name']); ?>" required>
+        <?php if (!empty($error)) : ?>
+            <div class="alert alert-error"><?php echo $error; ?></div>
+        <?php endif; ?>
 
-        <label for="date_of_birth">Date of Birth</label>
-        <input type="date" id="date_of_birth" name="date_of_birth" value="<?php echo htmlspecialchars($student['date_of_birth']); ?>" required>
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="name">Student Name</label>
+                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($student['name']); ?>" required>
+            </div>
 
-        <label for="contact">Contact</label>
-        <input type="text" id="contact" name="contact" value="<?php echo htmlspecialchars($student['contact']); ?>" required>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" value="<?php echo htmlspecialchars($student['date_of_birth']); ?>" required>
+            </div>
 
-        <label for="address">Address</label>
-        <textarea id="address" name="address" rows="4" required><?php echo htmlspecialchars($student['address']); ?></textarea>
+            <div class="form-group">
+                <label for="contact">Contact Number</label>
+                <input type="text" id="contact" name="contact" value="<?php echo htmlspecialchars($student['contact']); ?>" required>
+            </div>
 
-        <button type="submit">Update Student</button>
-    </form>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" rows="3" required><?php echo htmlspecialchars($student['address']); ?></textarea>
+            </div>
 
-    <div class="links">
-        <a href="view_students.php">View Students</a>
-        <a href="../index.php">Back to Home</a>
+            <button type="submit" class="btn btn-success">Update Student</button>
+            <a href="view_students.php" class="btn btn-outline">Cancel</a>
+        </form>
     </div>
 </div>
 
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>
