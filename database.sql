@@ -86,3 +86,37 @@ values (1, 1), (2, 2);
 
 insert into grades (student_id, course_id, marks)
 values (1, 1, 85);
+
+----------FOREIGN KEY CONSTRAINTS------------
+
+ALTER TABLE attendance
+ADD CONSTRAINT fk_attendance_enrollment
+FOREIGN KEY (student_id, course_id)
+REFERENCES enrollment(student_id, course_id)
+ON DELETE CASCADE;
+
+ALTER TABLE grades
+ADD CONSTRAINT fk_grades_enrollment
+FOREIGN KEY (student_id, course_id)
+REFERENCES enrollment(student_id, course_id)
+ON DELETE CASCADE;
+
+SELECT conname
+FROM pg_constraint
+WHERE conrelid = 'enrollment'::regclass;
+
+ALTER TABLE enrollment
+DROP CONSTRAINT enrollment_student_id_fkey,
+DROP CONSTRAINT enrollment_course_id_fkey;
+
+ALTER TABLE enrollment
+ADD CONSTRAINT enrollment_student_id_fkey
+FOREIGN KEY (student_id)
+REFERENCES students(student_id)
+ON DELETE CASCADE;
+
+ALTER TABLE enrollment
+ADD CONSTRAINT enrollment_course_id_fkey
+FOREIGN KEY (course_id)
+REFERENCES courses(course_id)
+ON DELETE CASCADE;
