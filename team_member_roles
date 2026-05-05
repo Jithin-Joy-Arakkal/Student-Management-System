@@ -1,0 +1,62 @@
+Member 1 – Database + Core Setup
+Role: Build the foundation
+Tasks:
+Design and create all tables in PostgreSQL
+Define relationships (FK constraints)
+Insert sample data
+Set up database connection in PHP (config.php)
+Write basic reusable queries
+Also helps with:
+Debugging DB-related issues
+
+Member 2 – Student Module (PHP + UI)
+Role: Complete student management
+Tasks:
+Add Student (form + PHP)
+View Students (table display)
+Update Student
+Delete Student
+Connect frontend form to backend
+👉 This is a full CRUD module
+
+Member 3 – Course + Enrollment Module
+Role: Handle course logic
+Tasks:
+Add/View/Update/Delete Courses
+Enroll students into courses
+Display enrolled students per course
+Use JOIN queries (important learning part)
+
+Member 4 – Attendance + Grades Module
+Role: Academic tracking features
+Tasks:
+Mark attendance (Present/Absent)
+View attendance records
+Enter marks & assign grades
+Display results
+
+Shared Responsibility (Everyone Must Do)
+All members should:
+Use same database structure
+Follow same naming conventions
+Test their module independently
+
+Integration Plan (VERY IMPORTANT)
+At the end:
+Combine all modules into:
+dashboard.php
+Ensure navigation works between pages
+Fix errors (everyone participates)
+👉 Don’t leave integration to one person—it will break.
+
+Folder Structure (Simple & Clean)
+
+/sms-project
+  /config
+    db.php
+  /students
+  /courses
+  /attendance
+  /grades
+  index.php
+  dashboard.php

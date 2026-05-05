@@ -8,6 +8,14 @@
         <li><a href="students/add_student.php">Add Student</a></li>
         <li><a href="students/view_students.php">View Students</a></li>
 
+        <!-- Course Module -->
+        <li><a href="courses/add_course.php">Add Course</a></li>
+        <li><a href="courses/view_courses.php">View Courses</a></li>
+
+        <!-- Enrollment Module -->
+        <li><a href="courses/enroll_student.php">Enroll Student</a></li>
+        <li><a href="courses/view_enrollment.php">View Enrollments</a></li>
+
         <!-- Attendance Module -->
         <li><a href="attendance/mark_attendance.php">Mark Attendance</a></li>
         <li><a href="attendance/view_attendance.php">View Attendance</a></li>
